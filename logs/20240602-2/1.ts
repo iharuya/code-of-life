@@ -7,36 +7,36 @@ import { sleep } from "jsr:@iharuya/time"
 await load({ export: true })
 const GEMINI_KEY = Deno.env.get("GEMINI_KEY")
 if (!GEMINI_KEY) {
-	console.error("エラー: 環境変数にGEMINI_KEYをセットしてください")
-	Deno.exit(1)
+  console.error("エラー: 環境変数にGEMINI_KEYをセットしてください")
+  Deno.exit(1)
 }
 
 const args = parseArgs(Deno.args, {
-	boolean: ["help"],
-	string: ["model", "log"],
-	default: {
-		model: "gemini-1.5-pro",
-		log: "",
-	},
+  boolean: ["help"],
+  string: ["model", "log"],
+  default: {
+    model: "gemini-1.5-pro",
+    log: "",
+  },
 })
 
 if (args.help) {
-	console.log("Usage: index.ts [options]")
-	console.log("Options:")
-	console.log("  --model <model>  モデルを指定します")
-	console.log("  --log <log>  ログを出力するディレクトリパスを指定します")
-	Deno.exit(0)
+  console.log("Usage: index.ts [options]")
+  console.log("Options:")
+  console.log("  --model <model>  モデルを指定します")
+  console.log("  --log <log>  ログを出力するディレクトリパスを指定します")
+  Deno.exit(0)
 }
 
 const thisFileText = await Deno.readTextFile("index.ts")
 
 if (args.log !== "") {
-	await ensureDir(args.log)
-	const items = await Array.fromAsync(Deno.readDir(args.log))
-	const logFileNumber = items.length + 1
-	const logFileName = `${logFileNumber}.ts`
-	const logFilePath = `${args.log}/${logFileName}`
-	await Deno.writeTextFile(logFilePath, thisFileText)
+  await ensureDir(args.log)
+  const items = await Array.fromAsync(Deno.readDir(args.log))
+  const logFileNumber = items.length + 1
+  const logFileName = `${logFileNumber}.ts`
+  const logFilePath = `${args.log}/${logFileName}`
+  await Deno.writeTextFile(logFilePath, thisFileText)
 }
 
 const genAI = new GoogleGenerativeAI(GEMINI_KEY)
@@ -45,14 +45,14 @@ const result = await model.generateContent(thisFileText)
 const response = result.response.text()
 
 const nextGeneration = response.replace(/```(?:ts|typescript)\s*/, "").replace(
-	/```$/,
-	"",
+  /```$/,
+  "",
 )
 await Deno.writeTextFile("index.ts", nextGeneration)
 
 await sleep(1000)
 const command = new Deno.Command("deno", {
-	args: ["run", "-A", "index.ts", "--log", args.log],
+  args: ["run", "-A", "index.ts", "--log", args.log],
 })
 command.spawn()
 console.log("New generation started.")

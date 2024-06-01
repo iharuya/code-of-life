@@ -3,8 +3,12 @@
   "packages": {
     "specifiers": {
       "jsr:@iharuya/time": "jsr:@iharuya/time@0.0.2",
+      "jsr:@std/assert@^0.225.2": "jsr:@std/assert@0.225.3",
       "jsr:@std/assert@^0.225.3": "jsr:@std/assert@0.225.3",
       "jsr:@std/cli": "jsr:@std/cli@0.224.3",
+      "jsr:@std/dotenv": "jsr:@std/dotenv@0.224.0",
+      "jsr:@std/fs": "jsr:@std/fs@0.229.1",
+      "jsr:@std/path@^0.225.1": "jsr:@std/path@0.225.1",
       "npm:@google/generative-ai": "npm:@google/generative-ai@0.11.4"
     },
     "jsr": {
@@ -19,6 +23,19 @@
         "dependencies": [
           "jsr:@std/assert@^0.225.3"
         ]
+      },
+      "@std/dotenv@0.224.0": {
+        "integrity": "d9234cdf551507dcda60abb6c474289843741d8c07ee8ce540c60f5c1b220a1d"
+      },
+      "@std/fs@0.229.1": {
+        "integrity": "38d3fb31f0ca0a8c1118e039939188f32e291a3f7f17dc0868fec22024bdfadd",
+        "dependencies": [
+          "jsr:@std/assert@^0.225.2",
+          "jsr:@std/path@^0.225.1"
+        ]
+      },
+      "@std/path@0.225.1": {
+        "integrity": "8c3220635a73730eb51fe43de9e10b79e2724a5bb8638b9355d35ae012fd9429"
       }
     },
     "npm": {
