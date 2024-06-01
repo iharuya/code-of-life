@@ -1,9 +1,7 @@
 import { parseArgs } from "jsr:@std/cli/parse-args"
 import { load } from "https://deno.land/std@0.224.0/dotenv/mod.ts"
 import { GoogleGenerativeAI } from "npm:@google/generative-ai"
-
-export const sleep = (ms: number) =>
-	new Promise((resolve) => setTimeout(resolve, ms))
+import { sleep } from "jsr:@iharuya/time"
 
 await load({ export: true })
 const GEMINI_KEY = Deno.env.get("GEMINI_KEY")
@@ -83,5 +81,6 @@ console.log("Identical process has been started")
  * 説明やコメントも要りません。ただしもちろん、このコメントブロックは残してください。
  *
  * Instruction
- * なにか面白い機能を頑張って考えて追加してください
+ * このコードを0.tsとして、n回更新されたらn.tsとなるように`./logs/20240601`以下に保存するような仕組みを追加してください。
+ * 加えて、なにか面白い機能を頑張って考えて追加していくようにしてください。
  */
