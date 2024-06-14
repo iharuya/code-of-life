@@ -31,10 +31,7 @@ const runNextGeneration = async (context: CliArgs, logFilePath: string) => {
 			await logError(`deno run が失敗しました: ${errorMessage}`, logFilePath)
 		}
 	} catch (err) {
-		await logError(
-			`deno run の実行中にエラーが発生しました: ${err}`,
-			logFilePath,
-		)
+		await logError(`deno run の実行中にエラーが発生しました: ${err}`, logFilePath)
 	}
 }
 
@@ -75,14 +72,14 @@ const main = async () => {
 	}
 
 	const thisFileText = await Deno.readTextFile("index.ts")
-
+	
 	await ensureDir(args.log)
 	const items = await Array.fromAsync(Deno.readDir(args.log))
 	const logFileNumber = items.length + 1
 	const logFileName = `${logFileNumber}.ts`
 	const logFilePath = `${args.log}/${logFileName}`
 	await Deno.writeTextFile(logFilePath, thisFileText)
-
+	
 	const genAI = new GoogleGenerativeAI(GEMINI_KEY)
 	const model = genAI.getGenerativeModel({ model: args.model })
 

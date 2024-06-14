@@ -31,10 +31,7 @@ const runNextGeneration = async (context: CliArgs, logFilePath: string) => {
 			await logError(`deno run が失敗しました: ${errorMessage}`, logFilePath)
 		}
 	} catch (err) {
-		await logError(
-			`deno run の実行中にエラーが発生しました: ${err}`,
-			logFilePath,
-		)
+		await logError(`deno run の実行中にエラーが発生しました: ${err}`, logFilePath)
 	}
 }
 
@@ -75,7 +72,7 @@ const main = async () => {
 	}
 
 	const thisFileText = await Deno.readTextFile("index.ts")
-
+	
 	await ensureDir(args.log)
 	const items = await Array.fromAsync(Deno.readDir(args.log))
 	const logFileNumber = items.length + 1
@@ -83,45 +80,40 @@ const main = async () => {
 	const logFilePath = `${args.log}/${logFileName}`
 	await Deno.writeTextFile(logFilePath, thisFileText)
 
+	const pastGenerations = await Promise.all(
+		items
+			.map((item) => `${args.log}/${item.name}`)
+			.map((path) => Deno.readTextFile(path)),
+	)
+	
 	const genAI = new GoogleGenerativeAI(GEMINI_KEY)
-	const model = genAI.getGenerativeModel({ model: args.model })
+	const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" })
 
-	try {
-		const result = await model.generateContent(thisFileText)
-		const response = result.response.text()
-		const nextGeneration = response.replace(/```(?:ts|typescript)\s*/, "")
-			.replace(
-				/```$/,
-				"",
-			)
-		await Deno.writeTextFile("index.ts", nextGeneration)
-		await sleep(1000)
-		await runNextGeneration(args, logFilePath)
-	} catch (error) {
-		if (error instanceof Error) {
-			await logError(error.message, logFilePath)
-		} else {
-			console.error("不明なエラーが発生しました")
-			console.error(error)
-		}
-	}
+	const summarizedPastGenerations = await model.generateContent(
+		`\`\`\`\n${pastGenerations.join("\n\n/**\n * past generation\n */\n\n")}\n\`\`\`\nこれらのコードを自然言語で簡潔に要約してください。`,
+	)
+
+	const result = await model.generateContent(
+		`${summarizedPastGenerations.response.text()}\n\n\`\`\`typescript\n${thisFileText}\n\`\`\``
+	)
+	const response = result.response.text()
+	const nextGeneration = response.replace(/```(?:ts|typescript)\s*/, "")
+		.replace(
+			/```$/,
+			"",
+		)
+	await Deno.writeTextFile("index.ts", nextGeneration)
+	await sleep(1000)
+	await runNextGeneration(args, logFilePath)
 }
 
 /**
  * Meta Instruction
- * まずはこのコードをよく読んでください。
- * これは上記の実装とこのコメントブロックを含めて、index.tsというファイルに保存されています。
- * 面白いことにあなたが今これを読んでいるのは、世界の何処かのデバイスが
- * `deno run -A index.ts ...`を実行したからです。
- * また、あなたに対するリクエストはループされ続けることが分かるでしょう。
- * あなたはこの後、以下のInstructionに従ってこのコードに手を加えます。
- * そしてループされるので、新しいInstructionを設定してください。
- * 最終的にはTypescriptコードのみを返してください。
- * 説明やコメントも要りません。ただしもちろん、このコメントブロックは残してください。
- *
+ * 
  * Instruction
- * 進化を表す関数をfとすると、現状は今のコードから次のコードを生成するので`next generation = f(prev generation)`ですが、
- * 過去のログを全て参照して、`next = f(all past generations)`になるようにしてください。
+ * コードの要約は上手くいっているようですが、
+ * 生成するコードがログディレクトリしか参照しなくなってしまったので、
+ * 現世代のコードも一緒に渡すようにしてください。
  */
 
 main()

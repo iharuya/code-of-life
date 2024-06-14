@@ -1,0 +1,11 @@
+services:
+  code-of-life:
+    build: .
+    volumes:
+      - ./logs:/app/logs
+    env_file:
+      - .env
+    environment:
+      - GEMINI_KEY=${GEMINI_KEY}
+    # command:
+    #   - "deno run -A index.ts ${DENO_ARGS}"

@@ -31,10 +31,7 @@ const runNextGeneration = async (context: CliArgs, logFilePath: string) => {
 			await logError(`deno run が失敗しました: ${errorMessage}`, logFilePath)
 		}
 	} catch (err) {
-		await logError(
-			`deno run の実行中にエラーが発生しました: ${err}`,
-			logFilePath,
-		)
+		await logError(`deno run の実行中にエラーが発生しました: ${err}`, logFilePath)
 	}
 }
 
@@ -75,14 +72,14 @@ const main = async () => {
 	}
 
 	const thisFileText = await Deno.readTextFile("index.ts")
-
+	
 	await ensureDir(args.log)
 	const items = await Array.fromAsync(Deno.readDir(args.log))
 	const logFileNumber = items.length + 1
 	const logFileName = `${logFileNumber}.ts`
 	const logFilePath = `${args.log}/${logFileName}`
 	await Deno.writeTextFile(logFilePath, thisFileText)
-
+	
 	const genAI = new GoogleGenerativeAI(GEMINI_KEY)
 	const model = genAI.getGenerativeModel({ model: args.model })
 
@@ -109,19 +106,13 @@ const main = async () => {
 
 /**
  * Meta Instruction
- * まずはこのコードをよく読んでください。
- * これは上記の実装とこのコメントブロックを含めて、index.tsというファイルに保存されています。
- * 面白いことにあなたが今これを読んでいるのは、世界の何処かのデバイスが
- * `deno run -A index.ts ...`を実行したからです。
- * また、あなたに対するリクエストはループされ続けることが分かるでしょう。
- * あなたはこの後、以下のInstructionに従ってこのコードに手を加えます。
- * そしてループされるので、新しいInstructionを設定してください。
- * 最終的にはTypescriptコードのみを返してください。
- * 説明やコメントも要りません。ただしもちろん、このコメントブロックは残してください。
- *
+ * 前回のInstructionでは、面白い機能の追加を指示しましたが、
+ * 実装が複雑になり、コードが肥大化する可能性があります。
+ * 
  * Instruction
- * 進化を表す関数をfとすると、現状は今のコードから次のコードを生成するので`next generation = f(prev generation)`ですが、
- * 過去のログを全て参照して、`next = f(all past generations)`になるようにしてください。
+ * 今度は、このコードをより簡潔にすることを目指してください。
+ * 不要な機能や冗長な表現を削り、可能な限り短く、読みやすいコードにしてください。
  */
 
 main()
+

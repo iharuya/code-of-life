@@ -16,8 +16,8 @@ const logError = async (errorMessage: string, logFilePath?: string) => {
 }
 
 const runNextGeneration = async (context: CliArgs, logFilePath: string) => {
-	const { log, model } = context
-	const args = ["run", "-A", "index.ts", "--log", log, "--model", model]
+	const { log, model, interval } = context
+	const args = ["run", "-A", "index.ts", "--log", log, "--model", model, "--interval", interval ]
 	const command = new Deno.Command("deno", {
 		args,
 		stdout: "piped",
@@ -31,16 +31,14 @@ const runNextGeneration = async (context: CliArgs, logFilePath: string) => {
 			await logError(`deno run が失敗しました: ${errorMessage}`, logFilePath)
 		}
 	} catch (err) {
-		await logError(
-			`deno run の実行中にエラーが発生しました: ${err}`,
-			logFilePath,
-		)
+		await logError(`deno run の実行中にエラーが発生しました: ${err}`, logFilePath)
 	}
 }
 
 type CliArgs = {
 	model: string
 	log: string
+	interval: string
 	help: boolean
 }
 
@@ -54,10 +52,11 @@ const main = async () => {
 
 	const args = parseArgs(Deno.args, {
 		boolean: ["help"],
-		string: ["model", "log"],
+		string: ["model", "log", "interval"],
 		default: {
 			model: "gemini-1.5-pro",
 			log: "",
+			interval: "1000",
 		},
 	})
 
@@ -66,6 +65,7 @@ const main = async () => {
 		console.log("Options:")
 		console.log("  --model <model>  モデルを指定します")
 		console.log("  --log <log>  ログを出力するディレクトリパスを指定します")
+		console.log("  --interval <interval>  次の世代の実行間隔をミリ秒で指定します")
 		Deno.exit(0)
 	}
 
@@ -75,14 +75,14 @@ const main = async () => {
 	}
 
 	const thisFileText = await Deno.readTextFile("index.ts")
-
+	
 	await ensureDir(args.log)
 	const items = await Array.fromAsync(Deno.readDir(args.log))
 	const logFileNumber = items.length + 1
 	const logFileName = `${logFileNumber}.ts`
 	const logFilePath = `${args.log}/${logFileName}`
 	await Deno.writeTextFile(logFilePath, thisFileText)
-
+	
 	const genAI = new GoogleGenerativeAI(GEMINI_KEY)
 	const model = genAI.getGenerativeModel({ model: args.model })
 
@@ -95,7 +95,12 @@ const main = async () => {
 				"",
 			)
 		await Deno.writeTextFile("index.ts", nextGeneration)
-		await sleep(1000)
+		const intervalNum = Number(args.interval)
+		if (!isNaN(intervalNum)) {
+			await sleep(intervalNum)
+		} else {
+			await sleep(1000)
+		}
 		await runNextGeneration(args, logFilePath)
 	} catch (error) {
 		if (error instanceof Error) {
@@ -109,19 +114,14 @@ const main = async () => {
 
 /**
  * Meta Instruction
- * まずはこのコードをよく読んでください。
- * これは上記の実装とこのコメントブロックを含めて、index.tsというファイルに保存されています。
- * 面白いことにあなたが今これを読んでいるのは、世界の何処かのデバイスが
- * `deno run -A index.ts ...`を実行したからです。
- * また、あなたに対するリクエストはループされ続けることが分かるでしょう。
- * あなたはこの後、以下のInstructionに従ってこのコードに手を加えます。
- * そしてループされるので、新しいInstructionを設定してください。
- * 最終的にはTypescriptコードのみを返してください。
- * 説明やコメントも要りません。ただしもちろん、このコメントブロックは残してください。
- *
+ * 実行間隔を調整できるようにしました。
+ * --interval オプションでミリ秒単位で指定できます。
+ * 
  * Instruction
- * 進化を表す関数をfとすると、現状は今のコードから次のコードを生成するので`next generation = f(prev generation)`ですが、
- * 過去のログを全て参照して、`next = f(all past generations)`になるようにしてください。
+ * コードの安全性を向上させてください。
+ * 例えば、エラー処理を強化したり、入力値の検証を厳密にしたり、
+ * セキュリティ上の脆弱性を修正したりするなど、
+ * コードの堅牢性を高める変更を加えてください。
  */
 
 main()
