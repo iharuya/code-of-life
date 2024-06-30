@@ -3,12 +3,18 @@
   "packages": {
     "specifiers": {
       "jsr:@iharuya/time": "jsr:@iharuya/time@0.0.2",
+      "jsr:@std/assert": "jsr:@std/assert@0.225.3",
       "jsr:@std/assert@^0.225.2": "jsr:@std/assert@0.225.3",
       "jsr:@std/assert@^0.225.3": "jsr:@std/assert@0.225.3",
+      "jsr:@std/async@^1.0.0-rc.1": "jsr:@std/async@1.0.0-rc.2",
       "jsr:@std/cli": "jsr:@std/cli@0.224.3",
+      "jsr:@std/data-structures@^1.0.0-rc.1": "jsr:@std/data-structures@1.0.0-rc.1",
       "jsr:@std/dotenv": "jsr:@std/dotenv@0.224.0",
       "jsr:@std/fs": "jsr:@std/fs@0.229.1",
+      "jsr:@std/internal@^1.0.0": "jsr:@std/internal@1.0.0",
+      "jsr:@std/path": "jsr:@std/path@0.225.1",
       "jsr:@std/path@^0.225.1": "jsr:@std/path@0.225.1",
+      "jsr:@std/testing": "jsr:@std/testing@0.225.2",
       "npm:@google/generative-ai": "npm:@google/generative-ai@0.11.4"
     },
     "jsr": {
@@ -16,13 +22,22 @@
         "integrity": "0695c7e0d1383df66eb677cd77a21c4a229ebadd2ed884efd4aab281bfed01da"
       },
       "@std/assert@0.225.3": {
-        "integrity": "b3c2847aecf6955b50644cdb9cf072004ea3d1998dd7579fc0acb99dbb23bd4f"
+        "integrity": "b3c2847aecf6955b50644cdb9cf072004ea3d1998dd7579fc0acb99dbb23bd4f",
+        "dependencies": [
+          "jsr:@std/internal@^1.0.0"
+        ]
+      },
+      "@std/async@1.0.0-rc.2": {
+        "integrity": "f3fe96c78e85c180fe31c3248da2e32d17f7e90ce5fe2765eb7c18861eaf13e1"
       },
       "@std/cli@0.224.3": {
         "integrity": "54fd879e24b738f6812dcc75bcae1534ba8f014245064ceae1bcfc2996c06d44",
         "dependencies": [
           "jsr:@std/assert@^0.225.3"
         ]
+      },
+      "@std/data-structures@1.0.0-rc.1": {
+        "integrity": "d8852b64a13d00deb1027363fa3ab71bbbced0720fa2233e77cac23eb76bfb87"
       },
       "@std/dotenv@0.224.0": {
         "integrity": "d9234cdf551507dcda60abb6c474289843741d8c07ee8ce540c60f5c1b220a1d"
@@ -34,8 +49,21 @@
           "jsr:@std/path@^0.225.1"
         ]
       },
+      "@std/internal@1.0.0": {
+        "integrity": "ac6a6dfebf838582c4b4f61a6907374e27e05bedb6ce276e0f1608fe84e7cd9a"
+      },
       "@std/path@0.225.1": {
-        "integrity": "8c3220635a73730eb51fe43de9e10b79e2724a5bb8638b9355d35ae012fd9429"
+        "integrity": "8c3220635a73730eb51fe43de9e10b79e2724a5bb8638b9355d35ae012fd9429",
+        "dependencies": [
+          "jsr:@std/assert@^0.225.2"
+        ]
+      },
+      "@std/testing@0.225.2": {
+        "integrity": "ae5a55e412926acdba98ec3b72aba93d2ab40cad3d0cd2454b048c10ca3584d8",
+        "dependencies": [
+          "jsr:@std/async@^1.0.0-rc.1",
+          "jsr:@std/data-structures@^1.0.0-rc.1"
+        ]
       }
     },
     "npm": {
@@ -46,7 +74,8 @@
     }
   },
   "redirects": {
-    "https://deno.land/std/flags/mod.ts": "https://deno.land/std@0.224.0/flags/mod.ts"
+    "https://deno.land/std/flags/mod.ts": "https://deno.land/std@0.224.0/flags/mod.ts",
+    "https://deno.land/x/gemini/mod.ts": "https://deno.land/x/gemini@v0.0.3-alpha/mod.ts"
   },
   "remote": {
     "https://deno.land/std@0.192.0/_util/asserts.ts": "178dfc49a464aee693a7e285567b3d0b555dc805ff490505a8aae34f9cfb1462",
@@ -75,6 +104,13 @@
     "https://deno.land/std@0.192.0/path/win32.ts": "d186344e5583bcbf8b18af416d13d82b35a317116e6460a5a3953508c3de5bba",
     "https://deno.land/std@0.224.0/dotenv/mod.ts": "0180eaeedaaf88647318811cdaa418cc64dc51fb08354f91f5f480d0a1309f7d",
     "https://deno.land/std@0.224.0/dotenv/parse.ts": "09977ff88dfd1f24f9973a338f0f91bbdb9307eb5ff6085446e7c423e4c7ba0c",
-    "https://deno.land/std@0.224.0/dotenv/stringify.ts": "275da322c409170160440836342eaa7cf012a1d11a7e700d8ca4e7f2f8aa4615"
+    "https://deno.land/std@0.224.0/dotenv/stringify.ts": "275da322c409170160440836342eaa7cf012a1d11a7e700d8ca4e7f2f8aa4615",
+    "https://deno.land/x/gemini@v0.0.3-alpha/gemini_client.ts": "fbe3ca95a29d402b472bd4592e7674d260f255ea54b8e92366b54f64c03a7537",
+    "https://deno.land/x/gemini@v0.0.3-alpha/gemini_request.ts": "cf3a139bd2454b07afb2745b3077c652979a87f2be9042a129d52812133df40a",
+    "https://deno.land/x/gemini@v0.0.3-alpha/gemini_response.ts": "6f49a61a9e40c607a25bc50971bb3a9326c0901233ccb5c60b9fbfc5a6444c3d",
+    "https://deno.land/x/gemini@v0.0.3-alpha/gemini_response_timing.ts": "88d5bde3b0425829005772e9717886d15f01f7b633acb7ceb56de54d6fea509b",
+    "https://deno.land/x/gemini@v0.0.3-alpha/gemini_status.ts": "085dc841fa9bc495c8ef5ba54030bb16f932dd5adf3c3e2c15f843bd1e048c68",
+    "https://deno.land/x/gemini@v0.0.3-alpha/gemini_utils.ts": "d22ee35c4177bf211c0653a3548f41ef12b4472519696116881bfcdf16078d1b",
+    "https://deno.land/x/gemini@v0.0.3-alpha/mod.ts": "016bd1afa7a98ac2911c68ccb529d8fe7a2fadd798e0c3279cf8480ebbce5dcd"
   }
 }
